@@ -1,0 +1,7 @@
+{
+  "name": "Copy Member Color",
+  "version": "1.0.0",
+  "description": "Adds 'Copy Color' option inside a member's context menu",
+  "author": "Kino",
+  "license": "MIT"
+}
