@@ -6,12 +6,12 @@ const { clipboard } = require("electron");
 
 module.exports = class CopyMemberColor extends Plugin {
   async startPlugin() {
-    const Menu = await getModule(["MenuItem"]);
+    const menu = await getModule(["MenuItem"]);
+    const label = await this.getElementLabel();
 
     injectContextMenu("copy-member-color", "GuildChannelUserContextMenu", ([{ target }], res) => {
       const parentElement = this.getParentElementFromChildElement(target);
       const roleColorElementStyle = this.getUserColorElementStylesFromParentElement(parentElement);
-
       const rgb = this.getRgb(roleColorElementStyle?.getPropertyValue("color"));
 
       if (!rgb) {
@@ -21,15 +21,21 @@ module.exports = class CopyMemberColor extends Plugin {
       const hex = this.getHexFromRgb(rgb);
 
       res.props.children.push(
-        React.createElement(Menu.MenuItem, {
+        React.createElement(menu.MenuItem, {
           id: "copy-member-color",
-          label: "Copy Color",
+          label: `Copy ${label}`,
           action: () => clipboard.writeText(hex),
         })
       );
 
       return res;
     });
+  }
+
+  getElementLabel() {
+    return getModule(["locale"]).then(module => {
+      return module.locale().includes("us") ? "Color" : "Colour";
+    })
   }
 
   getParentElementFromChildElement(element) {
